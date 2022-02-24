@@ -1,4 +1,5 @@
 import './style.css'
+import EARTH_SURFACE from './img/earth-surface.jpg'
 
 import * as THREE from 'three'
 
@@ -24,7 +25,7 @@ camera.position.setY(10)
 
 const geometry = new THREE.SphereGeometry( 15, 64, 32 );
 const textureLoader = new THREE.TextureLoader();
-const surface = textureLoader.load('./img/earth-surface.jpg');
+const surface = textureLoader.load(EARTH_SURFACE);
 // const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 const material = new THREE.MeshPhongMaterial({map: surface});
 const sphere = new THREE.Mesh( geometry, material );
