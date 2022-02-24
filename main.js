@@ -8,7 +8,7 @@ import {
 
 const scene = new THREE.Scene()
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
 
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
@@ -19,19 +19,22 @@ renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight)
 
 document.body.appendChild(renderer.domElement);
-camera.position.setZ(30)
+camera.position.setZ(40)
 camera.position.setY(10)
 
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100)
-const material = new THREE.MeshStandardMaterial({
-  color: 0xFF6347
-})
-const torus = new THREE.Mesh(geometry, material)
+const geometry = new THREE.SphereGeometry( 15, 64, 32 );
+const textureLoader = new THREE.TextureLoader();
+const surface = textureLoader.load('./img/earth-surface.jpg');
+// const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+const material = new THREE.MeshPhongMaterial({map: surface});
+const sphere = new THREE.Mesh( geometry, material );
+sphere.position.setY(10)
+scene.add( sphere );
 
-scene.add(torus);
+// scene.add(sphere);
 
 const pointLight = new THREE.PointLight(0xFFFFFF)
-pointLight.position.set(20, 20, 0)
+pointLight.position.set(0, 10, 40)
 
 const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.25)
 scene.add(pointLight, ambientLight)
@@ -42,6 +45,7 @@ const gridHelper = new THREE.GridHelper(300, 100)
 scene.add(gridHelper)
 
 const controls = new OrbitControls(camera, renderer.domElement)
+controls.update()
 
 function addStar() {
   const geometry = new THREE.SphereGeometry(.25, 24, 24)
@@ -61,10 +65,10 @@ function addStar() {
 function animate() {
   requestAnimationFrame(animate)
 
-  torus.rotation.x += 0.005
-  torus.rotation.y += 0.005
-  torus.rotation.z += 0.005
-
+  // sphere.rotation.x += 0.005
+  sphere.rotation.y -= 0.0005
+  // torus.rotation.z += 0.005
+  controls.update()
   renderer.render(scene, camera)
 }
 
