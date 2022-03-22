@@ -4,6 +4,8 @@ import * as THREE from 'three'
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare'
+import Flare0 from './img/lensflare0.png'
+import Flare3 from './img/lensflare3.png'
 
 
 let container, camera, scene, renderer, controls;
@@ -41,8 +43,9 @@ scene.add(gridHelper);
 // LENSFLARE
 const textureLoader = new THREE.TextureLoader();
 
-const textureFlare0 = textureLoader.load( './img/lensflare0.png' );
-const textureFlare3 = textureLoader.load( './img/lensflare3.png' );
+
+const textureFlare0 = textureLoader.load(Flare0);
+const textureFlare3 = textureLoader.load(Flare3);
 
 addLight( 1, 1, 1, 0, 0, - 100 );
 
