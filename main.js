@@ -1,75 +1,76 @@
 import './style.css'
-import EARTH_SURFACE from './img/earth-surface.jpg'
 
 import * as THREE from 'three'
 
-import {
-  OrbitControls
-} from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare'
 
-const scene = new THREE.Scene()
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100)
+let container, camera, scene, renderer, controls;
 
-const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector('#bg'),
-})
+container = document.createElement( 'div' );
+document.body.appendChild( container );
 
-renderer.setPixelRatio(window.devicePixelRatio)
+let SCREEN_WIDTH = window.innerWidth;
+let SCREEN_HEIGHT = window.innerHeight;
 
-renderer.setSize(window.innerWidth, window.innerHeight)
+scene = new THREE.Scene()
 
-document.body.appendChild(renderer.domElement);
-camera.position.setZ(40)
-camera.position.setY(10)
+// CAMERA
+camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+camera.position.set( 0, 10, 80 );
 
-const geometry = new THREE.SphereGeometry( 15, 64, 32 );
+// SCENE
+scene = new THREE.Scene();
+scene.background = new THREE.Color( 0x050505 );
+scene.fog = new THREE.Fog( 0x050505, 400, 1000 );
+
+// LIGHTS
+scene.add( new THREE.AmbientLight( 0x222222 ) );
+
+// RENDERER
+renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+container.appendChild( renderer.domElement );
+
+// GRID HELPER
+const gridHelper = new THREE.GridHelper(300, 100);
+scene.add(gridHelper);
+
+// LENSFLARE
 const textureLoader = new THREE.TextureLoader();
-const surface = textureLoader.load(EARTH_SURFACE);
-// const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-const material = new THREE.MeshPhongMaterial({map: surface});
-const sphere = new THREE.Mesh( geometry, material );
-sphere.position.setY(10)
-scene.add( sphere );
 
-// scene.add(sphere);
+const textureFlare0 = textureLoader.load( 'img/lensflare0.png' );
+const textureFlare3 = textureLoader.load( 'img/lensflare3.png' );
 
-const pointLight = new THREE.PointLight(0xFFFFFF)
-pointLight.position.set(0, 10, 40)
+addLight( 1, 1, 1, 0, 0, - 100 );
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.25)
-scene.add(pointLight, ambientLight)
+function addLight( h, s, l, x, y, z ) {
 
-// const lightHelper = new THREE.PointLightHelper(pointLight)
-// scene.add(lightHelper)
-const gridHelper = new THREE.GridHelper(300, 100)
-scene.add(gridHelper)
+  const light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
+  light.color.setHSL( h, s, l );
+  light.position.set( x, y, z );
+  scene.add( light );
 
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.update()
+  const lensflare = new Lensflare();
+  lensflare.addElement( new LensflareElement( textureFlare0, 700, 0, light.color ) );
+  lensflare.addElement( new LensflareElement( textureFlare3, 60, 0.6 ) );
+  lensflare.addElement( new LensflareElement( textureFlare3, 70, 0.7 ) );
+  lensflare.addElement( new LensflareElement( textureFlare3, 120, 0.9 ) );
+  lensflare.addElement( new LensflareElement( textureFlare3, 70, 1 ) );
+  light.add( lensflare );
 
-function addStar() {
-  const geometry = new THREE.SphereGeometry(.25, 24, 24)
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xFFFFFF
-  })
-  const star = new THREE.Mesh(geometry, material)
-
-  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(150))
-
-  star.position.set(x, y, z)
-  scene.add(star)
 }
 
-// Array(200).fill().forEach(addStar)
+// CONTROLS
+controls = new OrbitControls( camera, renderer.domElement );
+controls.target.set( 0, 0, 0 );
+controls.update();
 
 function animate() {
   requestAnimationFrame(animate)
 
-  // sphere.rotation.x += 0.005
-  sphere.rotation.y -= 0.0005
-  // torus.rotation.z += 0.005
-  controls.update()
   renderer.render(scene, camera)
 }
 
