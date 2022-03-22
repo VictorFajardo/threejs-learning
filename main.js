@@ -41,8 +41,8 @@ scene.add(gridHelper);
 // LENSFLARE
 const textureLoader = new THREE.TextureLoader();
 
-const textureFlare0 = textureLoader.load( 'img/lensflare0.png' );
-const textureFlare3 = textureLoader.load( 'img/lensflare3.png' );
+const textureFlare0 = textureLoader.load( './img/lensflare0.png' );
+const textureFlare3 = textureLoader.load( './img/lensflare3.png' );
 
 addLight( 1, 1, 1, 0, 0, - 100 );
 
